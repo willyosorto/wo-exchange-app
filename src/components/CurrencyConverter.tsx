@@ -1,49 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { ArrowDownUp, Check, ChevronsUpDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
-import { ArrowDownUp, Check, ChevronsUpDown } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-
-interface Currency {
-  code: string;
-  name: string;
-  symbol: string;
-  flag: string;
-}
-
-const currencies: Currency[] = [
-  { code: 'USD', name: 'US Dollar', symbol: '$', flag: '🇺🇸' },
-  { code: 'EUR', name: 'Euro', symbol: '€', flag: '🇪🇺' },
-  { code: 'GBP', name: 'British Pound', symbol: '£', flag: '🇬🇧' },
-  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', flag: '🇯🇵' },
-  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', flag: '🇦🇺' },
-  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', flag: '🇨🇦' },
-  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', flag: '🇨🇭' },
-  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥', flag: '🇨🇳' },
-  { code: 'INR', name: 'Indian Rupee', symbol: '₹', flag: '🇮🇳' },
-  { code: 'MXN', name: 'Mexican Peso', symbol: '$', flag: '🇲🇽' },
-  { code: 'BRL', name: 'Brazilian Real', symbol: 'R$', flag: '🇧🇷' },
-  { code: 'KRW', name: 'South Korean Won', symbol: '₩', flag: '🇰🇷' },
-];
-
-// Mock exchange rates (base: USD)
-const exchangeRates: Record<string, number> = {
-  USD: 1,
-  EUR: 0.92,
-  GBP: 0.79,
-  JPY: 149.50,
-  AUD: 1.52,
-  CAD: 1.36,
-  CHF: 0.88,
-  CNY: 7.24,
-  INR: 83.12,
-  MXN: 17.05,
-  BRL: 4.97,
-  KRW: 1308.50,
-};
+import { convertCurrency, currencies } from '../api/exchangeApi';
 
 interface CurrencyConverterProps {
   initialAmount?: string;
@@ -52,8 +15,9 @@ interface CurrencyConverterProps {
 export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => {
   const [fromCurrency, setFromCurrency] = useState('USD');
   const [toCurrency, setToCurrency] = useState('EUR');
-  const [amount, setAmount] = useState(initialAmount || '100');
+  const [amount, setAmount] = useState(initialAmount || '1');
   const [convertedAmount, setConvertedAmount] = useState('0');
+  const [conversionRate, setConversionRate] = useState(1);
   const [openFromCurrency, setOpenFromCurrency] = useState(false);
   const [openToCurrency, setOpenToCurrency] = useState(false);
 
@@ -64,15 +28,46 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
   }, [initialAmount]);
 
   useEffect(() => {
-    const numAmount = parseFloat(amount);
-    if (!isNaN(numAmount) && numAmount >= 0) {
-      const fromRate = exchangeRates[fromCurrency];
-      const toRate = exchangeRates[toCurrency];
-      const result = (numAmount / fromRate) * toRate;
-      setConvertedAmount(result.toFixed(2));
-    } else {
-      setConvertedAmount('0');
-    }
+    let isMounted = true;
+
+    const performConversion = async () => {
+      const parsedAmount = parseFloat(amount);
+
+      if (!Number.isFinite(parsedAmount) || parsedAmount < 0) {
+        if (isMounted) {
+          setConvertedAmount('0');
+        }
+        return;
+      }
+
+      try {
+        const result = await convertCurrency(
+          fromCurrency,
+          toCurrency,
+          parsedAmount
+        );
+
+        if (!isMounted) {
+          return;
+        }
+
+        setConversionRate(result.conversion_rate);
+        setConvertedAmount(result.conversion_result.toFixed(2));
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        console.warn('Failed to convert currency', error);
+        setConvertedAmount('0');
+      }
+    };
+
+    performConversion();
+
+    return () => {
+      isMounted = false;
+    };
   }, [amount, fromCurrency, toCurrency]);
 
   const handleSwap = () => {
@@ -226,7 +221,7 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
 
         <div className="pt-2 px-4 py-3 bg-muted rounded-lg">
           <p className="text-center text-muted-foreground">
-            1 {fromCurrency} = {(exchangeRates[toCurrency] / exchangeRates[fromCurrency]).toFixed(4)} {toCurrency}
+            1 {fromCurrency} = {conversionRate.toFixed(4)} {toCurrency}
           </p>
         </div>
       </CardContent>
