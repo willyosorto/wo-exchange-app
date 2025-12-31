@@ -14,7 +14,7 @@ interface CurrencyConverterProps {
 
 export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => {
   const [fromCurrency, setFromCurrency] = useState('USD');
-  const [toCurrency, setToCurrency] = useState('EUR');
+  const [toCurrency, setToCurrency] = useState('HNL');
   const [amount, setAmount] = useState(initialAmount || '1');
   const [convertedAmount, setConvertedAmount] = useState('0');
   const [conversionRate, setConversionRate] = useState(1);
@@ -81,7 +81,7 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader className="pb-4">
-        <CardTitle>Currency Converter</CardTitle>
+        <CardTitle data-cy="exchange-title">Currency Converter</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
@@ -89,6 +89,7 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
           <Popover open={openFromCurrency} onOpenChange={setOpenFromCurrency}>
             <PopoverTrigger asChild>
               <Button
+                data-cy="exchange-from-button"
                 variant="outline"
                 role="combobox"
                 aria-expanded={openFromCurrency}
@@ -104,12 +105,13 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
             </PopoverTrigger>
             <PopoverContent className="w-full p-0" align="start">
               <Command>
-                <CommandInput placeholder="Search currency..." />
+                <CommandInput placeholder="Search currency..." data-cy="from-country-search-input" />
                 <CommandList>
                   <CommandEmpty>No currency found.</CommandEmpty>
                   <CommandGroup>
                     {currencies.map((currency) => (
                       <CommandItem
+                        data-cy={`from-country-currency-${currency.code.toLowerCase()}`}
                         key={currency.code}
                         value={`${currency.code} ${currency.name}`}
                         onSelect={() => {
@@ -134,6 +136,7 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
           </Popover>
           <div className="relative mt-3">
             <Input
+              data-cy="exchange-from-amount-input"
               type="number"
               inputMode="decimal"
               value={amount}
@@ -149,6 +152,7 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
 
         <div className="flex justify-center">
           <Button
+            data-cy="swap-exchange-button"
             variant="outline"
             size="icon"
             onClick={handleSwap}
@@ -163,6 +167,7 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
           <Popover open={openToCurrency} onOpenChange={setOpenToCurrency}>
             <PopoverTrigger asChild>
               <Button
+                data-cy="exchange-to-button"
                 variant="outline"
                 role="combobox"
                 aria-expanded={openToCurrency}
@@ -178,12 +183,13 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
             </PopoverTrigger>
             <PopoverContent className="w-full p-0" align="start">
               <Command>
-                <CommandInput placeholder="Search currency..." />
+                <CommandInput placeholder="Search currency..." data-cy="to-country-search-input" />
                 <CommandList>
                   <CommandEmpty>No currency found.</CommandEmpty>
                   <CommandGroup>
                     {currencies.map((currency) => (
                       <CommandItem
+                        data-cy={`to-country-currency-${currency.code.toLowerCase()}`}
                         key={currency.code}
                         value={`${currency.code} ${currency.name}`}
                         onSelect={() => {
@@ -208,6 +214,7 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
           </Popover>
           <div className="relative mt-3">
             <Input
+              data-cy="exchange-to-amount-input"
               type="text"
               value={convertedAmount}
               readOnly
@@ -220,7 +227,7 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
         </div>
 
         <div className="pt-2 px-4 py-3 bg-muted rounded-lg">
-          <p className="text-center text-muted-foreground">
+          <p className="text-center text-muted-foreground" data-cy="exchange-result">
             1 {fromCurrency} = {conversionRate.toFixed(4)} {toCurrency}
           </p>
         </div>
