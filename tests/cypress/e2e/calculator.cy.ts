@@ -7,7 +7,7 @@ describe("Calculator", () => {
     cy.get('[data-cy="mobile-calculator-button"]').click();
 
     cy.verification("check the main title is visible");
-    cy.get('[data-cy="calculator-title"]').should("exist").contains("Calculator");
+    cy.get('[data-cy="calculator-title"]').should("exist").contains("Calculator TEST");
   });
 
   it("performs basic arithmetic operations", () => {
@@ -147,7 +147,7 @@ describe("Calculator", () => {
   });
 
 
-  it.only("validate the copy to clipboard and verify the number in the exchange converter", () => {
+  it("validate the copy to clipboard and verify the number in the exchange converter", () => {
       cy.step("navigate to the calculator");
       cy.visit("/");
       cy.get('[data-cy="mobile-calculator-button"]').click();

@@ -3,3 +3,8 @@ node_modules
 
 #Envs
 .env
+
+#Cypress
+tests/cypress/videos
+tests/cypress/screenshots
+tests/cypress/downloads
