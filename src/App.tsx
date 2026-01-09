@@ -18,10 +18,11 @@ export default function App() {
       <Toaster />
       
       {/* Top Navigation - Desktop Only */}
-      <nav className="hidden md:block sticky top-0 z-10 bg-card border-b border-border shadow-sm">
+      <nav data-testid="desktop-menu" className="hidden md:block sticky top-0 z-10 bg-card border-b border-border shadow-sm">
         <div className="max-w-4xl mx-auto px-6 py-3">
           <div className="flex gap-2 justify-center">
             <button
+              data-testid="desktop-converter-button"
               onClick={() => setCurrentScreen('converter')}
               className={`flex items-center gap-2 py-2 px-4 rounded-lg transition-all ${
                 currentScreen === 'converter'
@@ -33,6 +34,7 @@ export default function App() {
               <span className="text-sm">Converter</span>
             </button>
             <button
+              data-testid="desktop-calculator-button"
               onClick={() => setCurrentScreen('calculator')}
               className={`flex items-center gap-2 py-2 px-4 rounded-lg transition-all ${
                 currentScreen === 'calculator'
@@ -57,11 +59,12 @@ export default function App() {
       </main>
 
       {/* Bottom Navigation - Mobile Only */}
-      <nav data-cy="mobile-menu" className="md:hidden fixed bottom-0 left-0 right-0 px-4 pb-6 pointer-events-none">
+      <nav data-cy="mobile-menu" data-testid="mobile-menu" className="md:hidden fixed bottom-0 left-0 right-0 px-4 pb-6 pointer-events-none">
         <div className="max-w-md mx-auto pointer-events-auto">
           <div className="bg-card border border-border shadow-xl rounded-2xl p-2 grid grid-cols-2 gap-2">
             <button
               data-cy="mobile-converter-button"
+              data-testid="mobile-converter-button"
               onClick={() => setCurrentScreen('converter')}
               className={`flex flex-col items-center justify-center py-3 px-4 rounded-xl transition-all ${
                 currentScreen === 'converter'
@@ -74,6 +77,7 @@ export default function App() {
             </button>
             <button
               data-cy="mobile-calculator-button"
+              data-testid="mobile-calculator-button"
               onClick={() => setCurrentScreen('calculator')}
               className={`flex flex-col items-center justify-center py-3 px-4 rounded-xl transition-all ${
                 currentScreen === 'calculator'

@@ -38,7 +38,7 @@ Cypress.Commands.add('step', (message: string) => {
     if (Cypress.config('isInteractive')) {
         cy.log(`Step: ${message}`);
     } else {
-        cy.task('log', `Step: ${message}`);
+        cy.task('log', `\x1b[36m Step:\x1b[0m ${message}`);
     }
 });
 
@@ -46,7 +46,7 @@ Cypress.Commands.add('verification', (message: string) => {
     if (Cypress.config('isInteractive')) {
         cy.log(`Verification: ${message}`);
     } else {
-        cy.task('log', `Verification: ${message}`);
+        cy.task('log', `\x1b[32m Verification:\x1b[0m ${message}`);
     }
 });
 

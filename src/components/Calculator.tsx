@@ -197,88 +197,88 @@ export const Calculator = ({ onCopy }: CalculatorProps = {}) => {
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader className="pb-4">
-        <CardTitle data-cy="calculator-title">Calculator</CardTitle>
+        <CardTitle data-cy="calculator-title" data-testid="calculator-title">Calculator</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="bg-input-background rounded-xl p-6 min-h-[100px] flex items-end justify-end">
           <div className="text-right flex-1">
             {expression && (
-              <div data-cy="calculator-operation" className="text-muted-foreground mb-1">
+              <div data-cy="calculator-operation" data-testid="calculator-operation" className="text-muted-foreground mb-1">
                 {expression}
               </div>
             )}
-            <div data-cy="calculator-display" className="text-3xl break-all">{display}</div>
+            <div data-cy="calculator-display" data-testid="calculator-display" className="text-3xl break-all">{display}</div>
           </div>
         </div>
 
         <div className="grid grid-cols-4 gap-3">
           {/* Row 1: Delete, Clear, Copy, Divide */}
-          <Button onClick={handleDelete} className={utilityButtonClass} data-cy="calculator-delete">
+          <Button onClick={handleDelete} className={utilityButtonClass} data-cy="calculator-delete" data-testid="calculator-delete">
             ⌫
           </Button>
-          <Button onClick={handleClear} className={utilityButtonClass} data-cy="calculator-clear">
+          <Button onClick={handleClear} className={utilityButtonClass} data-cy="calculator-clear" data-testid="calculator-clear">
             C
           </Button>
-          <Button onClick={handleCopy} className={utilityButtonClass} data-cy="calculator-copy">
+          <Button onClick={handleCopy} className={utilityButtonClass} data-cy="calculator-copy" data-testid="calculator-copy">
             <Copy className="h-5 w-5" />
           </Button>
-          <Button onClick={() => handleOperation('÷')} className={operationButtonClass} data-cy="calculator-divide">
+          <Button onClick={() => handleOperation('÷')} className={operationButtonClass} data-cy="calculator-divide" data-testid="calculator-divide">
             ÷
           </Button>
 
           {/* Row 2: 7, 8, 9, Multiply */}
-          <Button onClick={() => handleNumber('7')} className={numberButtonClass} data-cy="calculator-7">
+          <Button onClick={() => handleNumber('7')} className={numberButtonClass} data-cy="calculator-7" data-testid="calculator-7">
             7
           </Button>
-          <Button onClick={() => handleNumber('8')} className={numberButtonClass} data-cy="calculator-8">
+          <Button onClick={() => handleNumber('8')} className={numberButtonClass} data-cy="calculator-8" data-testid="calculator-8">
             8
           </Button>
-          <Button onClick={() => handleNumber('9')} className={numberButtonClass} data-cy="calculator-9">
+          <Button onClick={() => handleNumber('9')} className={numberButtonClass} data-cy="calculator-9" data-testid="calculator-9">
             9
           </Button>
-          <Button onClick={() => handleOperation('×')} className={operationButtonClass} data-cy="calculator-multiply">
+          <Button onClick={() => handleOperation('×')} className={operationButtonClass} data-cy="calculator-multiply" data-testid="calculator-multiply">
             ×
           </Button>
 
           {/* Row 3: 4, 5, 6, Subtract */}
-          <Button onClick={() => handleNumber('4')} className={numberButtonClass} data-cy="calculator-4">
+          <Button onClick={() => handleNumber('4')} className={numberButtonClass} data-cy="calculator-4" data-testid="calculator-4">
             4
           </Button>
-          <Button onClick={() => handleNumber('5')} className={numberButtonClass} data-cy="calculator-5">
+          <Button onClick={() => handleNumber('5')} className={numberButtonClass} data-cy="calculator-5" data-testid="calculator-5">
             5
           </Button>
-          <Button onClick={() => handleNumber('6')} className={numberButtonClass} data-cy="calculator-6">
+          <Button onClick={() => handleNumber('6')} className={numberButtonClass} data-cy="calculator-6" data-testid="calculator-6">
             6
           </Button>
-          <Button onClick={() => handleOperation('-')} className={operationButtonClass} data-cy="calculator-subtract">
+          <Button onClick={() => handleOperation('-')} className={operationButtonClass} data-cy="calculator-subtract" data-testid="calculator-subtract">
             -
           </Button>
 
           {/* Row 4: 1, 2, 3, Add */}
-          <Button onClick={() => handleNumber('1')} className={numberButtonClass} data-cy="calculator-1">
+          <Button onClick={() => handleNumber('1')} className={numberButtonClass} data-cy="calculator-1" data-testid="calculator-1">
             1
           </Button>
-          <Button onClick={() => handleNumber('2')} className={numberButtonClass} data-cy="calculator-2">
+          <Button onClick={() => handleNumber('2')} className={numberButtonClass} data-cy="calculator-2" data-testid="calculator-2">
             2
           </Button>
-          <Button onClick={() => handleNumber('3')} className={numberButtonClass} data-cy="calculator-3">
+          <Button onClick={() => handleNumber('3')} className={numberButtonClass} data-cy="calculator-3" data-testid="calculator-3">
             3
           </Button>
-          <Button onClick={() => handleOperation('+')} className={operationButtonClass} data-cy="calculator-add">
+          <Button onClick={() => handleOperation('+')} className={operationButtonClass} data-cy="calculator-add" data-testid="calculator-add">
             +
           </Button>
 
           {/* Row 5: Percent, 0, Decimal, Equals */}
-          <Button onClick={handlePercent} className={utilityButtonClass} data-cy="calculator-percent">
+          <Button onClick={handlePercent} className={utilityButtonClass} data-cy="calculator-percent" data-testid="calculator-percent">
             %
           </Button>
-          <Button onClick={() => handleNumber('0')} className={numberButtonClass} data-cy="calculator-0">
+          <Button onClick={() => handleNumber('0')} className={numberButtonClass} data-cy="calculator-0" data-testid="calculator-0">
             0
           </Button>
-          <Button onClick={handleDecimal} className={numberButtonClass} data-cy="calculator-decimal">
+          <Button onClick={handleDecimal} className={numberButtonClass} data-cy="calculator-decimal" data-testid="calculator-decimal">
             .
           </Button>
-          <Button onClick={calculate} className={operationButtonClass} data-cy="calculator-equals">
+          <Button onClick={calculate} className={operationButtonClass} data-cy="calculator-equals" data-testid="calculator-equals">
             =
           </Button>
         </div>
