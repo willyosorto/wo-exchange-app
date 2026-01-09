@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Exchange API', () => {
     const apiKey = Cypress.env('VITE_EXCHANGE_API_KEY');
     const apiUrl = Cypress.env('VITE_EXCHANGE_API_URL');

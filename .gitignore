@@ -8,3 +8,4 @@ node_modules
 tests/cypress/videos
 tests/cypress/screenshots
 tests/cypress/downloads
+tests/cypress/reports

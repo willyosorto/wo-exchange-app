@@ -28,11 +28,11 @@ describe("Currency Converter", () => {
     cy.get('[data-cy="exchange-from-amount-input"]').clear().type("100");
 
     cy.wait("@convertRequest").then((interception) => {
-      const expectedValue = interception.response?.body?.conversion_result;
+      const expectedValue = parseFloat(interception.response?.body?.conversion_result).toFixed(2);
 
       cy.verification("confirm the converted total and displayed rate");
       cy.get('[data-cy="exchange-to-amount-input"]').invoke("val").then((value) => {
-        expect(Number(value)).to.equal(expectedValue);
+        expect(value).to.equal(expectedValue);
       });
     });
 

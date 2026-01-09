@@ -42,6 +42,10 @@ export default defineConfig({
         }
       )
     },
+    reporter: "cypress-multi-reporters",
+    reporterOptions: {
+      configFile: "tests/cypress.reporter.config.json",
+    },
   },
   screenshotOnRunFailure: true,
   viewportWidth: 390,

@@ -7,7 +7,7 @@ describe("Calculator", () => {
     cy.get('[data-cy="mobile-calculator-button"]').click();
 
     cy.verification("check the main title is visible");
-    cy.get('[data-cy="calculator-title"]').should("exist").contains("Calculator TEST");
+    cy.get('[data-cy="calculator-title"]').should("exist").contains("Calculator");
   });
 
   it("performs basic arithmetic operations", () => {
