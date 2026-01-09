@@ -57,10 +57,11 @@ export default function App() {
       </main>
 
       {/* Bottom Navigation - Mobile Only */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 px-4 pb-6 pointer-events-none">
+      <nav data-cy="mobile-menu" className="md:hidden fixed bottom-0 left-0 right-0 px-4 pb-6 pointer-events-none">
         <div className="max-w-md mx-auto pointer-events-auto">
           <div className="bg-card border border-border shadow-xl rounded-2xl p-2 grid grid-cols-2 gap-2">
             <button
+              data-cy="mobile-converter-button"
               onClick={() => setCurrentScreen('converter')}
               className={`flex flex-col items-center justify-center py-3 px-4 rounded-xl transition-all ${
                 currentScreen === 'converter'
@@ -72,6 +73,7 @@ export default function App() {
               <span className="text-sm">Converter</span>
             </button>
             <button
+              data-cy="mobile-calculator-button"
               onClick={() => setCurrentScreen('calculator')}
               className={`flex flex-col items-center justify-center py-3 px-4 rounded-xl transition-all ${
                 currentScreen === 'calculator'
