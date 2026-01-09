@@ -31,7 +31,7 @@ const CardTitle = ({ className, ...props }: ComponentProps<"div">) => {
   return (
     <h4
       data-slot="card-title"
-      className={mergeClassNames("leading-none", className)}
+      className={mergeClassNames("leading-none font-semibold", className)}
       {...props}
     />
   );
