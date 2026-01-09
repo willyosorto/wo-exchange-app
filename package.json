@@ -30,6 +30,7 @@
         "vaul": "^1.1.2"
     },
     "devDependencies": {
+        "@playwright/test": "^1.57.0",
         "@types/node": "^20.10.0",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
@@ -54,9 +55,13 @@
         "build": "vite build",
         "test:e2e:cypress:run": "cypress run --config-file tests/cypress.config.ts",
         "test:e2e:cypress:open": "cypress open --config-file tests/cypress.config.ts",
-        "cypress:report:merge:mochawesome": "mochawesome-merge tests/cypress/reports/mochawesome/*.json > tests/cypress/reports/mochawesome/merged.json",
-        "cypress:report:html:mochawesome": "marge tests/cypress/reports/mochawesome/merged.json -f final-report -o tests/cypress/reports/mochawesome/html",
-        "cypress:report:merge:junit": "tsx tests/cypress/helpers/merger.ts",
-        "cypress:report:merge:all": "yarn cypress:report:merge:mochawesome && yarn cypress'report:html:mochawesome && yarn cypress:report:merge:junit"
+        "test:e2e:cypress:mochawesome:merge": "mochawesome-merge tests/cypress/reports/mochawesome/*.json > tests/cypress/reports/mochawesome/merged.json",
+        "test:e2e:cypress:mochawesome:html": "marge tests/cypress/reports/mochawesome/merged.json -f final-report -o tests/cypress/reports/mochawesome/html",
+        "test:e2e:cypress:junit:merge": "tsx tests/cypress/helpers/merger.ts",
+        "test:e2e:cypress:merge:all": "yarn cypress:report:merge:mochawesome && yarn cypress'report:html:mochawesome && yarn cypress:report:merge:junit",
+        "test:e2e:playwright:run": "playwright test --config=tests/playwright.config.ts",
+        "test:e2e:playwright:ui": "playwright test --config=tests/playwright.config.ts --ui",
+        "test:e2e:playwright:debug": "playwright test --config=tests/playwright.config.ts --debug",
+        "test:e2e:playwright:report": "playwright show-report tests/playwright/reports/html"
     }
 }

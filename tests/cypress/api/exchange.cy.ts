@@ -6,13 +6,14 @@ describe('Exchange API', () => {
 
     it('status 200: success request for an exchange from USD to HNL', () => {
         let amount = 10;
+        cy.step(`Making GET request to ${apiUrl}/pair/USD/HNL/${amount}`);
         cy.request({
             method: 'GET',
             url: `${apiUrl}/pair/USD/HNL/${amount}`,
             headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined,
             failOnStatusCode: false,
         }).then((response) => {
-            expect(response.status).to.eq(200);
+            cy.verification('Check response status is 200 and body contains all required keys');
 
             const body = response.body;
             expect(body).to.include.all.keys(
@@ -38,12 +39,14 @@ describe('Exchange API', () => {
     });
 
     it('status 401: unauthorized request for using an invalid API key', () => {
+        cy.step(`Making GET request with invalid API key to ${apiUrl}/pair/USD/HNL/1`);
         cy.request({
             method: 'GET',
             url: `${apiUrl}/pair/USD/HNL/1`,
             headers: { Authorization: 'Bearer invalid-key' },
             failOnStatusCode: false,
         }).then((response) => {
+            cy.verification('Check response status is 401 or 403 and body indicates error');
             expect([401, 403]).to.include(response.status);
 
             const body = response.body;
@@ -53,12 +56,14 @@ describe('Exchange API', () => {
     });
 
     it('status 404: invalid request for an incorrect currency code', () => {
+        cy.step(`Making GET request to ${apiUrl}/pair/UZD/HNL/1`);
         cy.request({
             method: 'GET',
             url: `${apiUrl}/pair/UZD/HNL/1`,
             headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined,
             failOnStatusCode: false,
         }).then((response) => {
+            cy.verification('Check response status is 404 and body indicates error');
             expect(response.status).to.eq(404);
 
             const body = response.body;

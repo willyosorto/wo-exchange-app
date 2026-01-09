@@ -9,3 +9,10 @@ tests/cypress/videos
 tests/cypress/screenshots
 tests/cypress/downloads
 tests/cypress/reports
+
+#Playwright
+tests/playwright/reports
+tests/playwright/test-results
+tests/playwright/.cache
+playwright-report
+test-results
