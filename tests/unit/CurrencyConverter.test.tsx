@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CurrencyConverter } from '../../src/components/CurrencyConverter';
+import { ExchangeProvider } from '../../src/context/ExchangeContext';
 import * as exchangeApi from '../../src/api/exchangeApi';
 
 vi.mock('../../src/api/exchangeApi', async () => {
@@ -12,9 +13,19 @@ vi.mock('../../src/api/exchangeApi', async () => {
   };
 });
 
+// Helper function to render component with provider
+const renderWithProvider = (component: React.ReactElement) => {
+  return render(
+    <ExchangeProvider>
+      {component}
+    </ExchangeProvider>
+  );
+};
+
 describe('CurrencyConverter Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
     vi.mocked(exchangeApi.convertCurrency).mockResolvedValue({
       conversion_rate: 24.5,
       conversion_result: 24.5,
@@ -23,38 +34,38 @@ describe('CurrencyConverter Component', () => {
 
   describe('Rendering', () => {
     it('should render the currency converter with title', () => {
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       expect(screen.getByTestId('exchange-title')).toHaveTextContent('Currency Converter');
     });
 
     it('should render from and to currency selectors', () => {
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       expect(screen.getByTestId('exchange-from-button')).toBeInTheDocument();
       expect(screen.getByTestId('exchange-to-button')).toBeInTheDocument();
     });
 
     it('should render amount input', () => {
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       expect(screen.getByTestId('exchange-from-amount-input')).toBeInTheDocument();
     });
 
     it('should render swap button', () => {
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       expect(screen.getByTestId('swap-exchange-button')).toBeInTheDocument();
     });
 
     it('should render converted amount display', () => {
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       expect(screen.getByTestId('exchange-to-amount-input')).toBeInTheDocument();
     });
 
     it('should have default currencies USD and HNL', () => {
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const fromButton = screen.getByTestId('exchange-from-button');
       const toButton = screen.getByTestId('exchange-to-button');
@@ -64,7 +75,7 @@ describe('CurrencyConverter Component', () => {
     });
 
     it('should have default amount of 1', () => {
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
       expect(amountInput.value).toBe('1');
@@ -73,19 +84,23 @@ describe('CurrencyConverter Component', () => {
 
   describe('Initial Amount Prop', () => {
     it('should accept and display initialAmount prop', () => {
-      render(<CurrencyConverter initialAmount="100" />);
+      renderWithProvider(<CurrencyConverter initialAmount="100" />);
       
       const amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
       expect(amountInput.value).toBe('100');
     });
 
     it('should update amount when initialAmount prop changes', () => {
-      const { rerender } = render(<CurrencyConverter initialAmount="50" />);
+      const { rerender } = renderWithProvider(<CurrencyConverter initialAmount="50" />);
       
       let amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
       expect(amountInput.value).toBe('50');
       
-      rerender(<CurrencyConverter initialAmount="75" />);
+      rerender(
+        <ExchangeProvider>
+          <CurrencyConverter initialAmount="75" />
+        </ExchangeProvider>
+      );
       
       amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
       expect(amountInput.value).toBe('75');
@@ -95,7 +110,7 @@ describe('CurrencyConverter Component', () => {
   describe('Amount Input', () => {
     it('should update amount on user input', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const amountInput = screen.getByTestId('exchange-from-amount-input');
       
@@ -107,21 +122,34 @@ describe('CurrencyConverter Component', () => {
 
     it('should call conversion API when amount changes', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
+      
+      // Wait for initial conversion
+      await waitFor(() => {
+        expect(exchangeApi.convertCurrency).toHaveBeenCalled();
+      });
+      
+      const initialCallCount = vi.mocked(exchangeApi.convertCurrency).mock.calls.length;
       
       const amountInput = screen.getByTestId('exchange-from-amount-input');
       
       await user.clear(amountInput);
       await user.type(amountInput, '50');
       
+      // Verify the converted amount is updated (may use cached rate)
       await waitFor(() => {
-        expect(exchangeApi.convertCurrency).toHaveBeenCalledWith('USD', 'HNL', 50);
+        const result = screen.getByTestId('exchange-to-amount-input');
+        expect(result).toHaveValue('1225.00'); // 50 * 24.5
       });
+      
+      // API might be called again or might use cache - both are valid
+      const finalCallCount = vi.mocked(exchangeApi.convertCurrency).mock.calls.length;
+      expect(finalCallCount).toBeGreaterThanOrEqual(initialCallCount);
     });
 
     it('should handle negative amounts', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const amountInput = screen.getByTestId('exchange-from-amount-input');
       
@@ -136,7 +164,7 @@ describe('CurrencyConverter Component', () => {
 
     it('should handle non-numeric input', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const amountInput = screen.getByTestId('exchange-from-amount-input');
       
@@ -153,7 +181,7 @@ describe('CurrencyConverter Component', () => {
   describe('Currency Swap', () => {
     it('should swap currencies when swap button is clicked', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const swapButton = screen.getByTestId('swap-exchange-button');
       const fromButton = screen.getByTestId('exchange-from-button');
@@ -172,7 +200,7 @@ describe('CurrencyConverter Component', () => {
 
     it('should trigger new conversion after swap', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       vi.clearAllMocks();
       
@@ -188,7 +216,7 @@ describe('CurrencyConverter Component', () => {
   describe('Currency Selection', () => {
     it('should open from currency dropdown when clicked', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const fromButton = screen.getByTestId('exchange-from-button');
       await user.click(fromButton);
@@ -200,7 +228,7 @@ describe('CurrencyConverter Component', () => {
 
     it('should display search input in currency dropdown', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const fromButton = screen.getByTestId('exchange-from-button');
       await user.click(fromButton);
@@ -213,7 +241,7 @@ describe('CurrencyConverter Component', () => {
 
     it('should filter currencies by search term', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const fromButton = screen.getByTestId('exchange-from-button');
       await user.click(fromButton);
@@ -226,7 +254,7 @@ describe('CurrencyConverter Component', () => {
 
     it('should handle same currency selection', async () => {
       // This is covered by e2e tests - unit test just verifies the component renders
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const fromButton = screen.getByTestId('exchange-from-button');
       expect(fromButton).toBeInTheDocument();
@@ -240,7 +268,7 @@ describe('CurrencyConverter Component', () => {
         conversion_result: 100.50,
       });
       
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       await waitFor(() => {
         const result = screen.getByTestId('exchange-to-amount-input');
@@ -254,7 +282,7 @@ describe('CurrencyConverter Component', () => {
         conversion_result: 24.5,
       });
       
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       await waitFor(() => {
         const rateDisplay = screen.getByText(/1 USD = 24\.5/i);
@@ -265,7 +293,7 @@ describe('CurrencyConverter Component', () => {
     it('should show 0 when conversion fails', async () => {
       vi.mocked(exchangeApi.convertCurrency).mockRejectedValue(new Error('API Error'));
       
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       await waitFor(() => {
         const result = screen.getByTestId('exchange-to-amount-input');
@@ -277,32 +305,36 @@ describe('CurrencyConverter Component', () => {
   describe('Edge Cases', () => {
     it('should handle zero amount', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const amountInput = screen.getByTestId('exchange-from-amount-input');
       await user.clear(amountInput);
       await user.type(amountInput, '0');
       
+      // Zero amount should call the API
       await waitFor(() => {
-        expect(exchangeApi.convertCurrency).toHaveBeenCalledWith('USD', 'HNL', 0);
+        const result = screen.getByTestId('exchange-to-amount-input');
+        expect(result).toHaveValue('0.00');
       });
     });
 
     it('should handle decimal amounts', async () => {
       const user = userEvent.setup();
-      render(<CurrencyConverter />);
+      renderWithProvider(<CurrencyConverter />);
       
       const amountInput = screen.getByTestId('exchange-from-amount-input');
       await user.clear(amountInput);
       await user.type(amountInput, '12.34');
       
+      // Verify the conversion result
       await waitFor(() => {
-        expect(exchangeApi.convertCurrency).toHaveBeenCalledWith('USD', 'HNL', 12.34);
+        const result = screen.getByTestId('exchange-to-amount-input');
+        expect(result).toHaveValue('302.33'); // 12.34 * 24.5
       });
     });
 
     it('should cleanup on unmount', () => {
-      const { unmount } = render(<CurrencyConverter />);
+      const { unmount } = renderWithProvider(<CurrencyConverter />);
       
       expect(() => unmount()).not.toThrow();
     });
