@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Copy } from 'lucide-react';
+import { Copy, Delete } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface CalculatorProps {
@@ -214,7 +214,7 @@ export const Calculator = ({ onCopy }: CalculatorProps = {}) => {
         <div className="grid grid-cols-4 gap-3">
           {/* Row 1: Delete, Clear, Copy, Divide */}
           <Button onClick={handleDelete} className={utilityButtonClass} data-cy="calculator-delete" data-testid="calculator-delete">
-            ⌫
+            <Delete className="h-5 w-5" />
           </Button>
           <Button onClick={handleClear} className={utilityButtonClass} data-cy="calculator-clear" data-testid="calculator-clear">
             C
