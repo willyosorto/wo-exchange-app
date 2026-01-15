@@ -13,6 +13,7 @@ test.describe('Currency Converter', () => {
     test('loads the currency converter app properly', async ({ page }) => {
         Step(device, 'Navigate to the main page');
         await page.goto('/');
+        await page.evaluate(() => localStorage.clear());
 
         Verification(device, 'Check the main title is visible');
         const title = page.getByTestId('exchange-title');
@@ -23,6 +24,7 @@ test.describe('Currency Converter', () => {
     test('allows selecting currencies, searching, and converting', async ({ page }) => {
         Step(device, 'Navigate to the converter');
         await page.goto('/');
+        await page.evaluate(() => localStorage.clear());
 
         Step(device, 'Select Euro as the from currency');
         await page.getByTestId('exchange-from-button').click();
@@ -30,21 +32,23 @@ test.describe('Currency Converter', () => {
         await page.getByTestId('from-country-currency-eur').click();
 
         Step(device, 'Select Honduras as the destination currency');
+        const initialResponsePromise = page.waitForResponse(response =>
+            response.url().includes('/pair/EUR/HNL/') && response.status() === 200,
+            { timeout: 10000 }
+        );
         await page.getByTestId('exchange-to-button').click();
         await page.getByTestId('to-country-search-input').fill('Lempira');
         await page.getByTestId('to-country-currency-hnl').click();
 
+        const initialResponse = await initialResponsePromise;
+        const initialResponseBody = await initialResponse.json();
+        const conversionRate = initialResponseBody.conversion_rate;
+
         Step(device, 'Enter the amount to convert');
-        const responsePromise = page.waitForResponse(response =>
-            response.url().includes('/pair/EUR/HNL/100') && response.status() === 200
-        );
         await page.getByTestId('exchange-from-amount-input').fill('100');
+        const expectedValue = (100 * conversionRate).toFixed(2);
 
-        const response = await responsePromise;
-        const responseBody = await response.json();
-        const expectedValue = parseFloat(responseBody.conversion_result).toFixed(2);
-
-        Verification(device, 'Confirm the converted total and displayed rate');
+        Verification(device, 'Confirm the converted total uses the cached rate correctly');
         const toAmountValue = await page.getByTestId('exchange-to-amount-input').inputValue();
         expect(toAmountValue).toBe(expectedValue);
 
@@ -57,28 +61,30 @@ test.describe('Currency Converter', () => {
     test('swap country currencies', async ({ page }) => {
         Step(device, 'Navigate to the converter');
         await page.goto('/');
+        await page.evaluate(() => localStorage.clear());
 
         Step(device, 'Select US Dollar as the from currency');
         await page.getByTestId('exchange-from-button').click();
         await page.getByTestId('from-country-search-input').fill('United States');
         await page.getByTestId('from-country-currency-usd').click();
+        const initialResponsePromise = page.waitForResponse(response =>
+            response.url().includes('/pair/USD/HNL/') && response.status() === 200,
+            { timeout: 10000 }
+        );
 
         Step(device, 'Select Honduras as the destination currency');
         await page.getByTestId('exchange-to-button').click();
         await page.getByTestId('to-country-search-input').fill('Lempira');
         await page.getByTestId('to-country-currency-hnl').click();
+        const initialResponse = await initialResponsePromise;
+        const initialResponseBody = await initialResponse.json();
+        const conversionRate = initialResponseBody.conversion_rate;
 
         Step(device, 'Enter the amount to convert');
-        const firstResponsePromise = page.waitForResponse(response =>
-            response.url().includes('/pair/USD/HNL/10') && response.status() === 200
-        );
         await page.getByTestId('exchange-from-amount-input').fill('10');
+        const expectedValue = (10 * conversionRate).toFixed(2);
 
-        const firstResponse = await firstResponsePromise;
-        const firstResponseBody = await firstResponse.json();
-        const expectedValue = parseFloat(firstResponseBody.conversion_result).toFixed(2);
-
-        Verification(device, 'Confirm the converted total and displayed rate');
+        Verification(device, 'Confirm the converted total uses the cached rate correctly');
         let toAmountValue = await page.getByTestId('exchange-to-amount-input').inputValue();
         expect(Number(toAmountValue)).toBe(Number(expectedValue));
 
@@ -89,22 +95,23 @@ test.describe('Currency Converter', () => {
 
         Step(device, 'Click in the swap button and call the api');
         const swappedResponsePromise = page.waitForResponse(response =>
-            response.url().includes('/pair/HNL/USD/10') && response.status() === 200
+            response.url().includes('/pair/HNL/USD/') && response.status() === 200,
+            { timeout: 10000 }
         );
         await page.getByTestId('swap-exchange-button').click();
 
         const swappedResponse = await swappedResponsePromise;
         const swappedResponseBody = await swappedResponse.json();
-        const swappedExpectedValue = parseFloat(swappedResponseBody.conversion_result).toFixed(2);
+        const swappedConversionRate = swappedResponseBody.conversion_rate;
+        const swappedExpectedValue = (10 * swappedConversionRate).toFixed(2);
 
-        Verification(device, 'Confirm the converted total and displayed rate');
+        Verification(device, 'Confirm the converted total matches the swapped API response');
         toAmountValue = await page.getByTestId('exchange-to-amount-input').inputValue();
         expect(Number(toAmountValue)).toBe(Number(swappedExpectedValue));
 
-        Verification(device, 'Validate the conversion rate in the correct one');
-        const conversionRate = swappedResponseBody.conversion_rate.toFixed(4);
+        Verification(device, 'Validate the conversion rate displays the swapped currencies');
         await expect(exchangeResult).toBeVisible();
-        await expect(exchangeResult).toContainText(`1 HNL = ${conversionRate} USD`);
+        await expect(exchangeResult).toContainText(`1 HNL = ${swappedConversionRate.toFixed(4)} USD`);
     });
 
     test('select same countries', async ({ page }) => {
@@ -112,6 +119,7 @@ test.describe('Currency Converter', () => {
 
         Step(device, 'Navigate to the converter');
         await page.goto('/');
+        await page.evaluate(() => localStorage.clear());
 
         Step(device, 'Select Japanese Yen as the from currency');
         await page.getByTestId('exchange-from-button').click();
