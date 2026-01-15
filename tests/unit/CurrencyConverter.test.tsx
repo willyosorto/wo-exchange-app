@@ -27,6 +27,8 @@ describe('CurrencyConverter Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    // Suppress console warnings during tests
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.mocked(exchangeApi.convertCurrency).mockResolvedValue({
       conversion_rate: 24.5,
       conversion_result: 24.5,
@@ -34,68 +36,86 @@ describe('CurrencyConverter Component', () => {
   });
 
   describe('Rendering', () => {
-    it('should render the currency converter with title', () => {
+    it('should render the currency converter with title', async () => {
       renderWithProvider(<CurrencyConverter />);
       
-      expect(screen.getByTestId('exchange-title')).toHaveTextContent('Currency Converter');
+      await waitFor(() => {
+        expect(screen.getByTestId('exchange-title')).toHaveTextContent('Currency Converter');
+      });
     });
 
-    it('should render from and to currency selectors', () => {
+    it('should render from and to currency selectors', async () => {
       renderWithProvider(<CurrencyConverter />);
       
-      expect(screen.getByTestId('exchange-from-button')).toBeInTheDocument();
-      expect(screen.getByTestId('exchange-to-button')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByTestId('exchange-from-button')).toBeInTheDocument();
+        expect(screen.getByTestId('exchange-to-button')).toBeInTheDocument();
+      });
     });
 
-    it('should render amount input', () => {
+    it('should render amount input', async () => {
       renderWithProvider(<CurrencyConverter />);
       
-      expect(screen.getByTestId('exchange-from-amount-input')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByTestId('exchange-from-amount-input')).toBeInTheDocument();
+      });
     });
 
-    it('should render swap button', () => {
+    it('should render swap button', async () => {
       renderWithProvider(<CurrencyConverter />);
       
-      expect(screen.getByTestId('swap-exchange-button')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByTestId('swap-exchange-button')).toBeInTheDocument();
+      });
     });
 
-    it('should render converted amount display', () => {
+    it('should render converted amount display', async () => {
       renderWithProvider(<CurrencyConverter />);
       
-      expect(screen.getByTestId('exchange-to-amount-input')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByTestId('exchange-to-amount-input')).toBeInTheDocument();
+      });
     });
 
-    it('should have default currencies USD and HNL', () => {
+    it('should have default currencies USD and HNL', async () => {
       renderWithProvider(<CurrencyConverter />);
       
-      const fromButton = screen.getByTestId('exchange-from-button');
-      const toButton = screen.getByTestId('exchange-to-button');
-      
-      expect(fromButton).toHaveTextContent('USD');
-      expect(toButton).toHaveTextContent('HNL');
+      await waitFor(() => {
+        const fromButton = screen.getByTestId('exchange-from-button');
+        const toButton = screen.getByTestId('exchange-to-button');
+        
+        expect(fromButton).toHaveTextContent('USD');
+        expect(toButton).toHaveTextContent('HNL');
+      });
     });
 
-    it('should have default amount of 1', () => {
+    it('should have default amount of 1', async () => {
       renderWithProvider(<CurrencyConverter />);
       
-      const amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
-      expect(amountInput.value).toBe('1');
+      await waitFor(() => {
+        const amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
+        expect(amountInput.value).toBe('1');
+      });
     });
   });
 
   describe('Initial Amount Prop', () => {
-    it('should accept and display initialAmount prop', () => {
+    it('should accept and display initialAmount prop', async () => {
       renderWithProvider(<CurrencyConverter initialAmount="100" />);
       
-      const amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
-      expect(amountInput.value).toBe('100');
+      await waitFor(() => {
+        const amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
+        expect(amountInput.value).toBe('100');
+      });
     });
 
-    it('should update amount when initialAmount prop changes', () => {
+    it('should update amount when initialAmount prop changes', async () => {
       const { rerender } = renderWithProvider(<CurrencyConverter initialAmount="50" />);
       
-      let amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
-      expect(amountInput.value).toBe('50');
+      await waitFor(() => {
+        let amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
+        expect(amountInput.value).toBe('50');
+      });
       
       rerender(
         <ExchangeProvider>
@@ -103,8 +123,10 @@ describe('CurrencyConverter Component', () => {
         </ExchangeProvider>
       );
       
-      amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
-      expect(amountInput.value).toBe('75');
+      await waitFor(() => {
+        const amountInput = screen.getByTestId('exchange-from-amount-input') as HTMLInputElement;
+        expect(amountInput.value).toBe('75');
+      });
     });
   });
 
@@ -257,8 +279,10 @@ describe('CurrencyConverter Component', () => {
       // This is covered by e2e tests - unit test just verifies the component renders
       renderWithProvider(<CurrencyConverter />);
       
-      const fromButton = screen.getByTestId('exchange-from-button');
-      expect(fromButton).toBeInTheDocument();
+      await waitFor(() => {
+        const fromButton = screen.getByTestId('exchange-from-button');
+        expect(fromButton).toBeInTheDocument();
+      });
     });
   });
 
@@ -334,8 +358,12 @@ describe('CurrencyConverter Component', () => {
       });
     });
 
-    it('should cleanup on unmount', () => {
+    it('should cleanup on unmount', async () => {
       const { unmount } = renderWithProvider(<CurrencyConverter />);
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('exchange-title')).toBeInTheDocument();
+      });
       
       expect(() => unmount()).not.toThrow();
     });
