@@ -27,6 +27,8 @@ describe('CurrencyConverter Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    // Suppress console warnings during tests
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.mocked(exchangeApi.convertCurrency).mockResolvedValue({
       conversion_rate: 24.5,
       conversion_result: 24.5,
