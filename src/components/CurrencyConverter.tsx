@@ -7,17 +7,33 @@ import { Button } from './ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { convertCurrency, currencies } from '../api/exchangeApi';
+import { useExchange } from '../context/ExchangeContext';
 
 interface CurrencyConverterProps {
   initialAmount?: string;
 }
 
 export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => {
-  const [fromCurrency, setFromCurrency] = useState('USD');
-  const [toCurrency, setToCurrency] = useState('HNL');
-  const [amount, setAmount] = useState(initialAmount || '1');
-  const [convertedAmount, setConvertedAmount] = useState('0');
-  const [conversionRate, setConversionRate] = useState(1);
+  const {
+    selectedFromCurrency,
+    selectedToCurrency,
+    setSelectedFromCurrency,
+    setSelectedToCurrency,
+    getCachedRate,
+    cacheRate,
+    lastConversion,
+    saveConversion,
+  } = useExchange();
+
+  const [fromCurrency, setFromCurrency] = useState(selectedFromCurrency);
+  const [toCurrency, setToCurrency] = useState(selectedToCurrency);
+  const [amount, setAmount] = useState(initialAmount || lastConversion?.amount || '1');
+  const [convertedAmount, setConvertedAmount] = useState(
+    lastConversion?.convertedAmount || '0'
+  );
+  const [conversionRate, setConversionRate] = useState(
+    lastConversion?.conversionRate || 1
+  );
   const [openFromCurrency, setOpenFromCurrency] = useState(false);
   const [openToCurrency, setOpenToCurrency] = useState(false);
 
@@ -26,6 +42,12 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
       setAmount(initialAmount);
     }
   }, [initialAmount]);
+
+  // Sync local state with context when currencies change
+  useEffect(() => {
+    setFromCurrency(selectedFromCurrency);
+    setToCurrency(selectedToCurrency);
+  }, [selectedFromCurrency, selectedToCurrency]);
 
   useEffect(() => {
     let isMounted = true;
@@ -41,18 +63,50 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
       }
 
       try {
-        const result = await convertCurrency(
-          fromCurrency,
-          toCurrency,
-          parsedAmount
-        );
+        // Check if we have a cached rate
+        const cachedRate = getCachedRate(fromCurrency, toCurrency);
+        
+        let rate: number;
+        let result: number;
+
+        if (cachedRate) {
+          // Use cached rate
+          rate = cachedRate.rate;
+          result = parsedAmount * rate;
+        } else {
+          // Fetch new rate from API
+          const apiResult = await convertCurrency(
+            fromCurrency,
+            toCurrency,
+            parsedAmount
+          );
+          rate = apiResult.conversion_rate;
+          result = apiResult.conversion_result;
+
+          // Cache the rate for future use
+          cacheRate(fromCurrency, toCurrency, rate);
+        }
 
         if (!isMounted) {
           return;
         }
 
-        setConversionRate(result.conversion_rate);
-        setConvertedAmount(result.conversion_result.toFixed(2));
+        setConversionRate(rate);
+        setConvertedAmount(result.toFixed(2));
+
+        // Save this conversion to history
+        saveConversion({
+          fromCurrency,
+          toCurrency,
+          amount,
+          convertedAmount: result.toFixed(2),
+          conversionRate: rate,
+          timestamp: Date.now(),
+        });
+
+        // Update context with selected currencies
+        setSelectedFromCurrency(fromCurrency);
+        setSelectedToCurrency(toCurrency);
       } catch (error) {
         if (!isMounted) {
           return;
@@ -68,7 +122,7 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
     return () => {
       isMounted = false;
     };
-  }, [amount, fromCurrency, toCurrency]);
+  }, [amount, fromCurrency, toCurrency, getCachedRate, cacheRate, saveConversion, setSelectedFromCurrency, setSelectedToCurrency]);
 
   const handleSwap = () => {
     setFromCurrency(toCurrency);
