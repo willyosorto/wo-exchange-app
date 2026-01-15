@@ -32,7 +32,6 @@ test.describe('Currency Converter', () => {
         await page.getByTestId('from-country-currency-eur').click();
 
         Step(device, 'Select Honduras as the destination currency');
-        // Set up the wait BEFORE clicking to select the destination currency
         const initialResponsePromise = page.waitForResponse(response =>
             response.url().includes('/pair/EUR/HNL/') && response.status() === 200,
             { timeout: 10000 }
@@ -41,15 +40,12 @@ test.describe('Currency Converter', () => {
         await page.getByTestId('to-country-search-input').fill('Lempira');
         await page.getByTestId('to-country-currency-hnl').click();
 
-        // Wait for the initial API call when currencies are selected (amount=1)
         const initialResponse = await initialResponsePromise;
         const initialResponseBody = await initialResponse.json();
         const conversionRate = initialResponseBody.conversion_rate;
 
         Step(device, 'Enter the amount to convert');
         await page.getByTestId('exchange-from-amount-input').fill('100');
-
-        // Calculate expected value using the cached rate
         const expectedValue = (100 * conversionRate).toFixed(2);
 
         Verification(device, 'Confirm the converted total uses the cached rate correctly');
@@ -71,8 +67,6 @@ test.describe('Currency Converter', () => {
         await page.getByTestId('exchange-from-button').click();
         await page.getByTestId('from-country-search-input').fill('United States');
         await page.getByTestId('from-country-currency-usd').click();
-
-        // Set up the wait BEFORE clicking to select the destination currency
         const initialResponsePromise = page.waitForResponse(response =>
             response.url().includes('/pair/USD/HNL/') && response.status() === 200,
             { timeout: 10000 }
@@ -82,16 +76,12 @@ test.describe('Currency Converter', () => {
         await page.getByTestId('exchange-to-button').click();
         await page.getByTestId('to-country-search-input').fill('Lempira');
         await page.getByTestId('to-country-currency-hnl').click();
-
-        // Wait for the initial API call when currencies are selected (amount=1)
         const initialResponse = await initialResponsePromise;
         const initialResponseBody = await initialResponse.json();
         const conversionRate = initialResponseBody.conversion_rate;
 
         Step(device, 'Enter the amount to convert');
         await page.getByTestId('exchange-from-amount-input').fill('10');
-
-        // Calculate expected value using the cached rate
         const expectedValue = (10 * conversionRate).toFixed(2);
 
         Verification(device, 'Confirm the converted total uses the cached rate correctly');
