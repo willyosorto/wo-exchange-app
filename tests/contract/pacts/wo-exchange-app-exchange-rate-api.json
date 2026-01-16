@@ -1,0 +1,619 @@
+{
+  "consumer": {
+    "name": "wo-exchange-app"
+  },
+  "interactions": [
+    {
+      "description": "a request for EUR to USD exchange rate with amount 100",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "exchange rate data exists for EUR to USD"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": [
+            "Bearer test-api-key"
+          ]
+        },
+        "method": "GET",
+        "path": "/pair/EUR/USD/100"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "base_code": "EUR",
+            "conversion_rate": 1.09,
+            "conversion_result": 109,
+            "documentation": "https://www.exchangerate-api.com/docs",
+            "result": "success",
+            "target_code": "USD",
+            "terms_of_use": "https://www.exchangerate-api.com/terms",
+            "time_last_update_unix": 1705308000,
+            "time_last_update_utc": "Sun, 15 Jan 2026 00:00:00 +0000",
+            "time_next_update_unix": 1705394400,
+            "time_next_update_utc": "Mon, 16 Jan 2026 00:00:00 +0000"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.conversion_rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "decimal"
+                }
+              ]
+            },
+            "$.conversion_result": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "decimal"
+                }
+              ]
+            },
+            "$.documentation": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.terms_of_use": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.time_last_update_unix": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.time_last_update_utc": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[A-Za-z]{3}, \\d{2} [A-Za-z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$"
+                }
+              ]
+            },
+            "$.time_next_update_unix": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.time_next_update_utc": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[A-Za-z]{3}, \\d{2} [A-Za-z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request for GBP to USD exchange rate with amount 1",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "exchange rate data exists for GBP to USD"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": [
+            "Bearer test-api-key"
+          ]
+        },
+        "method": "GET",
+        "path": "/pair/GBP/USD/1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "base_code": "GBP",
+            "conversion_rate": 1.27,
+            "conversion_result": 1.27,
+            "documentation": "https://www.exchangerate-api.com/docs",
+            "result": "success",
+            "target_code": "USD",
+            "terms_of_use": "https://www.exchangerate-api.com/terms",
+            "time_last_update_unix": 1705308000,
+            "time_last_update_utc": "Sun, 15 Jan 2026 00:00:00 +0000",
+            "time_next_update_unix": 1705394400,
+            "time_next_update_utc": "Mon, 16 Jan 2026 00:00:00 +0000"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.conversion_rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "decimal"
+                }
+              ]
+            },
+            "$.conversion_result": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "decimal"
+                }
+              ]
+            },
+            "$.documentation": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.terms_of_use": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.time_last_update_unix": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.time_last_update_utc": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[A-Za-z]{3}, \\d{2} [A-Za-z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$"
+                }
+              ]
+            },
+            "$.time_next_update_unix": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.time_next_update_utc": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[A-Za-z]{3}, \\d{2} [A-Za-z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request for USD to HNL exchange rate with amount 10",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "exchange rate data exists for USD to HNL"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": [
+            "Bearer test-api-key"
+          ]
+        },
+        "method": "GET",
+        "path": "/pair/USD/HNL/10"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "base_code": "USD",
+            "conversion_rate": 24.5,
+            "conversion_result": 245,
+            "documentation": "https://www.exchangerate-api.com/docs",
+            "result": "success",
+            "target_code": "HNL",
+            "terms_of_use": "https://www.exchangerate-api.com/terms",
+            "time_last_update_unix": 1705308000,
+            "time_last_update_utc": "Sun, 15 Jan 2026 00:00:00 +0000",
+            "time_next_update_unix": 1705394400,
+            "time_next_update_utc": "Mon, 16 Jan 2026 00:00:00 +0000"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.conversion_rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "decimal"
+                }
+              ]
+            },
+            "$.conversion_result": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "decimal"
+                }
+              ]
+            },
+            "$.documentation": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.terms_of_use": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.time_last_update_unix": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.time_last_update_utc": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[A-Za-z]{3}, \\d{2} [A-Za-z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$"
+                }
+              ]
+            },
+            "$.time_next_update_unix": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.time_next_update_utc": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[A-Za-z]{3}, \\d{2} [A-Za-z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request for USD to JPY exchange rate with large amount",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "exchange rate data exists for USD to JPY"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": [
+            "Bearer test-api-key"
+          ]
+        },
+        "method": "GET",
+        "path": "/pair/USD/JPY/1000000"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "base_code": "USD",
+            "conversion_rate": 148.5,
+            "conversion_result": 148500000,
+            "documentation": "https://www.exchangerate-api.com/docs",
+            "result": "success",
+            "target_code": "JPY",
+            "terms_of_use": "https://www.exchangerate-api.com/terms",
+            "time_last_update_unix": 1705308000,
+            "time_last_update_utc": "Sun, 15 Jan 2026 00:00:00 +0000",
+            "time_next_update_unix": 1705394400,
+            "time_next_update_utc": "Mon, 16 Jan 2026 00:00:00 +0000"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.conversion_rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "decimal"
+                }
+              ]
+            },
+            "$.conversion_result": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "decimal"
+                }
+              ]
+            },
+            "$.documentation": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.terms_of_use": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.time_last_update_unix": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.time_last_update_utc": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[A-Za-z]{3}, \\d{2} [A-Za-z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$"
+                }
+              ]
+            },
+            "$.time_next_update_unix": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.time_next_update_utc": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[A-Za-z]{3}, \\d{2} [A-Za-z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request with invalid API key",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "API key is invalid"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": [
+            "Bearer invalid-key"
+          ]
+        },
+        "method": "GET",
+        "path": "/pair/USD/HNL/10"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "error-type": "invalid-key",
+            "result": "error"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$['error-type']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "invalid-key"
+                }
+              ]
+            }
+          }
+        },
+        "status": 401
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request with invalid currency code UZD",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "exchange rate data does not exist for invalid currency code"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": [
+            "Bearer test-api-key"
+          ]
+        },
+        "method": "GET",
+        "path": "/pair/UZD/HNL/10"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "error-type": "unsupported-code",
+            "result": "error"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$['error-type']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "unsupported-code"
+                }
+              ]
+            }
+          }
+        },
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request with invalid target currency code XYZ",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "exchange rate data does not exist for invalid target currency"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": [
+            "Bearer test-api-key"
+          ]
+        },
+        "method": "GET",
+        "path": "/pair/USD/XYZ/10"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "error-type": "unsupported-code",
+            "result": "error"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$['error-type']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "unsupported-code"
+                }
+              ]
+            }
+          }
+        },
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.28",
+      "models": "1.3.5"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "exchange-rate-api"
+  }
+}
