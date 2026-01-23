@@ -35,15 +35,6 @@ jobs:
       - name: Build application
         run: yarn build
 
-      - name: Start dev server
-        run: yarn dev &
-        env:
-          VITE_EXCHANGE_API_KEY: ${{ secrets.VITE_EXCHANGE_API_KEY }}
-          VITE_EXCHANGE_API_URL: ${{ secrets.VITE_EXCHANGE_API_URL }}
-
-      - name: Wait for dev server
-        run: npx wait-on http://localhost:3000 -t 120000
-
       - name: Run Playwright tests
         run: yarn test:e2e:playwright:run
         env:
