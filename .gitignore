@@ -23,6 +23,9 @@ test-results
 
 #Contract Testing
 tests/contract/logs
+
 #K6 Performance Testing
 tests/k6/reports
+
+#MacOS
 .DS_Store
