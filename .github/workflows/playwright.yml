@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-screenshots
-          path: tests/playwright/reports/screenshots
+          path: tests/playwright/reports/test-results
           if-no-files-found: ignore
           retention-days: 7
 
@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-videos
-          path: tests/playwright/reports/videos
+          path: tests/playwright/reports/test-results
           if-no-files-found: ignore
           retention-days: 7
 
