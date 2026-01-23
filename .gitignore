@@ -25,3 +25,4 @@ test-results
 tests/contract/logs
 #K6 Performance Testing
 tests/k6/reports
+.DS_Store
