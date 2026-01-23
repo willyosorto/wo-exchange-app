@@ -4,6 +4,10 @@ node_modules
 #Envs
 .env
 
+#Build
+build
+dist
+
 #Cypress
 tests/cypress/videos
 tests/cypress/screenshots
