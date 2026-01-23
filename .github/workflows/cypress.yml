@@ -40,11 +40,9 @@ jobs:
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
           browser: chrome
-          headed: false
         env:
           VITE_EXCHANGE_API_KEY: ${{ secrets.VITE_EXCHANGE_API_KEY }}
           VITE_EXCHANGE_API_URL: ${{ secrets.VITE_EXCHANGE_API_URL }}
-          CYPRESS_CHROME_ARGS: --disable-web-security,--allow-file-access-from-files,--use-fake-ui-for-media-stream,--use-fake-device-for-media-stream,--clipboard-read,--clipboard-write
 
       - name: Merge Mochawesome reports
         if: always()
