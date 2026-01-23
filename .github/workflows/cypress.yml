@@ -11,12 +11,6 @@ jobs:
   cypress-tests:
     runs-on: ubuntu-latest
     
-    strategy:
-      fail-fast: false
-      matrix:
-        # Run tests in parallel across multiple containers
-        containers: [1, 2]
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -41,9 +35,6 @@ jobs:
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
           browser: chrome
-          record: false
-          parallel: true
-          group: 'E2E Tests'
         env:
           VITE_EXCHANGE_API_KEY: ${{ secrets.VITE_EXCHANGE_API_KEY }}
           VITE_EXCHANGE_API_URL: ${{ secrets.VITE_EXCHANGE_API_URL }}
@@ -62,7 +53,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-screenshots-${{ matrix.containers }}
+          name: cypress-screenshots
           path: tests/cypress/screenshots
           if-no-files-found: ignore
           retention-days: 7
@@ -71,7 +62,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-videos-${{ matrix.containers }}
+          name: cypress-videos
           path: tests/cypress/videos
           if-no-files-found: ignore
           retention-days: 7
@@ -80,7 +71,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-mochawesome-report-${{ matrix.containers }}
+          name: cypress-mochawesome-report
           path: tests/cypress/reports/mochawesome/html
           if-no-files-found: ignore
           retention-days: 30
@@ -89,7 +80,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-junit-report-${{ matrix.containers }}
+          name: cypress-junit-report
           path: tests/cypress/reports/junit/final-results.xml
           if-no-files-found: ignore
           retention-days: 30
