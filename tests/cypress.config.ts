@@ -26,15 +26,6 @@ export default defineConfig({
           return null;
         },
       });
-      on('before:browser:launch', (browser, launchOptions) => {
-        if (browser.name === 'chrome' || browser.name === 'chromium') {
-          launchOptions.args.push('--disable-blink-features=AutomationControlled');
-          launchOptions.args.push('--disable-features=IsolateOrigins,site-per-process');
-          launchOptions.args.push('--disable-site-isolation-trials');
-          launchOptions.args.push('--unsafely-treat-insecure-origin-as-secure=http://localhost:3000');
-        }
-        return launchOptions;
-      });
       on(
         'after:spec',
         (spec: Cypress.Spec, results: CypressCommandLine.RunResult) => {

@@ -16,4 +16,24 @@
 // Import commands.js using ES2015 syntax:
 import "./commands";
 
+// Mock clipboard API for CI environments
+Cypress.on('window:before:load', (win) => {
+  let clipboardData = '';
+  
+  // Mock clipboard API
+  Object.defineProperty(win.navigator, 'clipboard', {
+    value: {
+      writeText: (text: string) => {
+        clipboardData = text;
+        return Promise.resolve();
+      },
+      readText: () => {
+        return Promise.resolve(clipboardData);
+      }
+    },
+    writable: true,
+    configurable: true
+  });
+});
+
 export {};
