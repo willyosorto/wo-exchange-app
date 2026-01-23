@@ -30,11 +30,14 @@
         "vaul": "^1.1.2"
     },
     "devDependencies": {
+        "@jest/globals": "^30.2.0",
+        "@pact-foundation/pact": "^16.0.4",
         "@playwright/test": "^1.57.0",
         "@testing-library/dom": "^10.4.1",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.1",
         "@testing-library/user-event": "^14.6.1",
+        "@types/jest": "^30.0.0",
         "@types/node": "^20.10.0",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
@@ -44,6 +47,7 @@
         "cypress-multi-reporters": "^2.0.5",
         "dotenv": "^17.2.3",
         "happy-dom": "^20.1.0",
+        "jest": "^30.2.0",
         "junit-report-merger": "^9.0.3",
         "mocha": "10",
         "mocha-junit-reporter": "^2.2.1",
@@ -51,6 +55,7 @@
         "mochawesome": "^7.1.4",
         "mochawesome-merge": "^5.1.0",
         "mochawesome-report-generator": "^6.3.2",
+        "ts-jest": "^29.4.6",
         "ts-node": "^10.9.2",
         "tsx": "^4.21.0",
         "typescript": "^5.6.3",
@@ -70,9 +75,13 @@
         "test:e2e:cypress:mochawesome:html": "marge tests/cypress/reports/mochawesome/merged.json -f final-report -o tests/cypress/reports/mochawesome/html",
         "test:e2e:cypress:junit:merge": "tsx tests/cypress/helpers/merger.ts",
         "test:e2e:cypress:merge:all": "yarn cypress:report:merge:mochawesome && yarn cypress'report:html:mochawesome && yarn cypress:report:merge:junit",
-        "test:e2e:playwright:run": "playwright test --config=tests/playwright.config.ts",
-        "test:e2e:playwright:ui": "playwright test --config=tests/playwright.config.ts --ui",
-        "test:e2e:playwright:debug": "playwright test --config=tests/playwright.config.ts --debug",
-        "test:e2e:playwright:report": "playwright show-report tests/playwright/reports/html"
+        "test:e2e:playwright:run": "playwright test --config=tests/playwright.config.ts --grep-invert /contract/",
+        "test:e2e:playwright:ui": "playwright test --config=tests/playwright.config.ts --grep-invert /contract/ --ui",
+        "test:e2e:playwright:debug": "playwright test --config=tests/playwright.config.ts --grep-invert /contract/ --debug",
+        "test:e2e:playwright:report": "playwright show-report tests/playwright/reports/html",
+        "test:contract:validation": "playwright test tests/playwright/contract --config=tests/playwright.config.ts",
+        "test:contract:pact": "jest --config=jest.config.pact.js",
+        "test:contract:pact:watch": "jest --config=jest.config.pact.js --watch",
+        "test:contract:pact:verbose": "jest --config=jest.config.pact.js --verbose"
     }
 }

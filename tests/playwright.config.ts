@@ -57,6 +57,11 @@ export default defineConfig({
             },
         },
         {
+            name: 'Contract Tests',
+            testMatch: '**/playwright/contract/**/*.spec.ts',
+            use: { ...devices['Desktop Chrome'] },
+        },
+        {
             name: 'Desktop Chrome',
             testMatch: '**/playwright/e2e/**/*.spec.ts',
             use: { ...devices['Desktop Chrome'] },
