@@ -192,13 +192,17 @@ export const convertCurrency = async (
 
   const apiKey = import.meta.env.VITE_EXCHANGE_API_KEY;
   const apiUrl = import.meta.env.VITE_EXCHANGE_API_URL;
-  const url = `${apiUrl}/pair/${from}/${to}/${amount}`;
+  const useMock = import.meta.env.VITE_USE_MOCK_API === 'true';
+  
+  // Use mock API if enabled
+  const baseUrl = useMock ? 'http://localhost:3001' : apiUrl;
+  const url = `${baseUrl}/pair/${from}/${to}/${amount}`;
 
-  const response = await axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-    },
-  });
+  const headers = useMock ? {} : {
+    Authorization: `Bearer ${apiKey}`,
+  };
+
+  const response = await axios.get(url, { headers });
   
   const conversion: ConversionResult = {
     conversion_rate: response.data?.conversion_rate,
