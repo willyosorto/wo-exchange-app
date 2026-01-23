@@ -4,6 +4,10 @@ node_modules
 #Envs
 .env
 
+#Build
+build
+dist
+
 #Cypress
 tests/cypress/videos
 tests/cypress/screenshots
@@ -19,5 +23,9 @@ test-results
 
 #Contract Testing
 tests/contract/logs
+
 #K6 Performance Testing
 tests/k6/reports
+
+#MacOS
+.DS_Store
