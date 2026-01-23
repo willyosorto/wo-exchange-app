@@ -1,0 +1,102 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  cypress-tests:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        # Run tests in parallel across multiple containers
+        containers: [1, 2]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build application
+        run: yarn build
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          config-file: tests/cypress.config.ts
+          start: yarn dev
+          wait-on: 'http://localhost:5173'
+          wait-on-timeout: 120
+          browser: chrome
+          record: false
+          parallel: true
+          group: 'E2E Tests'
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+      - name: Merge Mochawesome reports
+        if: always()
+        run: |
+          yarn test:e2e:cypress:mochawesome:merge
+          yarn test:e2e:cypress:mochawesome:html
+
+      - name: Merge JUnit reports
+        if: always()
+        run: yarn test:e2e:cypress:junit:merge
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-${{ matrix.containers }}
+          path: tests/cypress/screenshots
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Cypress videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos-${{ matrix.containers }}
+          path: tests/cypress/videos
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Mochawesome HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-mochawesome-report-${{ matrix.containers }}
+          path: tests/cypress/reports/mochawesome/html
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload JUnit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-junit-report-${{ matrix.containers }}
+          path: tests/cypress/reports/junit/final-results.xml
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Publish Test Results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: tests/cypress/reports/junit/final-results.xml
+          check_name: Cypress Test Results
+          comment_mode: off
