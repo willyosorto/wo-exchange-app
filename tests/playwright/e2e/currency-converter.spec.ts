@@ -66,16 +66,17 @@ test.describe('Currency Converter', () => {
         Step(device, 'Select US Dollar as the from currency');
         await page.getByTestId('exchange-from-button').click();
         await page.getByTestId('from-country-search-input').fill('United States');
-        await page.getByTestId('from-country-currency-usd').click();
         const initialResponsePromise = page.waitForResponse(response =>
             response.url().includes('/pair/USD/HNL/') && response.status() === 200,
             { timeout: 10000 }
-        );
+        );        
+        await page.getByTestId('from-country-currency-usd').click();
 
         Step(device, 'Select Honduras as the destination currency');
         await page.getByTestId('exchange-to-button').click();
         await page.getByTestId('to-country-search-input').fill('Lempira');
         await page.getByTestId('to-country-currency-hnl').click();
+        
         const initialResponse = await initialResponsePromise;
         const initialResponseBody = await initialResponse.json();
         const conversionRate = initialResponseBody.conversion_rate;
@@ -99,7 +100,6 @@ test.describe('Currency Converter', () => {
             { timeout: 10000 }
         );
         await page.getByTestId('swap-exchange-button').click();
-
         const swappedResponse = await swappedResponsePromise;
         const swappedResponseBody = await swappedResponse.json();
         const swappedConversionRate = swappedResponseBody.conversion_rate;
