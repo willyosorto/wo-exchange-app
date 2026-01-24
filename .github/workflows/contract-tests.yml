@@ -85,7 +85,7 @@ jobs:
           path: tests/contract/pacts
 
       - name: Start Pact stub server
-        run: docker-compose -f docker-compose.pact-stub.yml up -d
+        run: docker compose -f docker-compose.pact-stub.yml up -d
 
       - name: Wait for stub server to be ready
         run: |
@@ -101,7 +101,7 @@ jobs:
 
       - name: Stop Pact stub server
         if: always()
-        run: docker-compose -f docker-compose.pact-stub.yml down
+        run: docker compose -f docker-compose.pact-stub.yml down
 
       - name: Upload Playwright contract test report
         if: always()
