@@ -1,0 +1,130 @@
+name: Contract Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  pact-contract-tests:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run Pact contract tests
+        run: yarn test:contract:pact
+        env:
+          VITE_EXCHANGE_API_KEY: ${{ secrets.VITE_EXCHANGE_API_KEY }}
+          VITE_EXCHANGE_API_URL: ${{ secrets.VITE_EXCHANGE_API_URL }}
+
+      - name: Upload Pact files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pact-contracts
+          path: tests/contract/pacts
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload Pact logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pact-logs
+          path: tests/contract/logs
+          if-no-files-found: ignore
+          retention-days: 7
+
+  playwright-contract-tests:
+    runs-on: ubuntu-latest
+    needs: pact-contract-tests
+    
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Download Pact contracts from previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: pact-contracts
+          path: tests/contract/pacts
+
+      - name: Start Pact stub server
+        run: docker-compose -f docker-compose.pact-stub.yml up -d
+
+      - name: Wait for stub server to be ready
+        run: |
+          echo "Waiting for Pact stub server..."
+          timeout 30 bash -c 'until curl -f http://localhost:8992 2>/dev/null; do sleep 1; done' || exit 1
+          echo "Stub server is ready!"
+
+      - name: Build application
+        run: yarn build
+
+      - name: Run Playwright contract validation tests
+        run: yarn test:contract:validation
+
+      - name: Stop Pact stub server
+        if: always()
+        run: docker-compose -f docker-compose.pact-stub.yml down
+
+      - name: Upload Playwright contract test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-contract-report
+          path: tests/playwright/reports/html
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload Playwright contract test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-contract-junit
+          path: tests/playwright/reports/junit
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Publish Test Results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: tests/playwright/reports/junit/*.xml
+          check_name: Playwright Contract Test Results
+          comment_mode: off

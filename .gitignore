@@ -27,5 +27,9 @@ tests/contract/logs
 #K6 Performance Testing
 tests/k6/reports
 
+#Unit Testing
+tests/unit/reports
+coverage
+
 #MacOS
 .DS_Store
