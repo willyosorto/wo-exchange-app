@@ -1,6 +1,16 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { htmlReport } from 'https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js';
+
+const USE_HTML_REPORT = __ENV.K6_HTML_REPORT !== 'false';
+let htmlReport;
+
+if (USE_HTML_REPORT) {
+  try {
+    htmlReport = (await import('https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js')).htmlReport;
+  } catch (e) {
+    console.log('HTML reporter not available, skipping...');
+  }
+}
 
 export const options = {
   scenarios: {
@@ -81,10 +91,16 @@ function testNotFoundError() {
 }
 
 export function handleSummary(data) {
-  return {
-    'tests/k6/reports/api-error-report.html': htmlReport(data),
+  const summary = {
     stdout: textSummary(data, { indent: ' ', enableColors: true }),
   };
+  
+  // Only generate HTML report if reporter is available
+  if (htmlReport) {
+    summary['tests/k6/reports/api-error-report.html'] = htmlReport(data);
+  }
+  
+  return summary;
 }
 
 function textSummary(data, options = {}) {

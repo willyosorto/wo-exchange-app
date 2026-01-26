@@ -53,6 +53,8 @@ jobs:
 
       - name: Run K6 API error tests
         run: yarn test:k6:api
+        env:
+          K6_HTML_REPORT: false
 
       - name: Stop servers
         if: always()
