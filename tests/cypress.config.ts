@@ -19,6 +19,7 @@ export default defineConfig({
     video: true,
     videosFolder: 'tests/cypress/videos',
     screenshotsFolder: 'tests/cypress/screenshots',
+    downloadsFolder: 'tests/cypress/downloads',
     setupNodeEvents(on) {
       on("task", {
         log(message: string) {

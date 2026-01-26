@@ -1,0 +1,76 @@
+name: K6 Performance Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  k6-performance:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install K6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Start mock API server in background
+        run: |
+          yarn test:k6:mock-server &
+          echo $! > mock-server.pid
+          sleep 3
+          echo "Mock server started on port 3001"
+
+      - name: Start app with mock API in background
+        run: |
+          yarn dev:mock &
+          echo $! > vite-server.pid
+          sleep 10
+          curl http://localhost:3000 || echo "Waiting for server..."
+          sleep 5
+
+      - name: Run K6 browser performance tests
+        run: yarn test:k6:browser
+
+      - name: Run K6 API error tests
+        run: yarn test:k6:api
+
+      - name: Stop servers
+        if: always()
+        run: |
+          if [ -f mock-server.pid ]; then
+            kill $(cat mock-server.pid) || true
+          fi
+          if [ -f vite-server.pid ]; then
+            kill $(cat vite-server.pid) || true
+          fi
+
+      - name: Upload K6 HTML reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-reports
+          path: tests/k6/reports/*.html
+          if-no-files-found: ignore
+          retention-days: 30
