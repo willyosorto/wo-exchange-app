@@ -98,9 +98,6 @@ jobs:
           timeout 30 bash -c 'until curl -s -o /dev/null -w "%{http_code}" http://localhost:8992 | grep -q "404\|200"; do echo "Retrying..."; sleep 2; done' || (echo "Health check failed. Container logs:"; docker compose -f docker-compose.pact-stub.yml logs; exit 1)
           echo "Stub server is ready!"
 
-      - name: Build application
-        run: yarn build
-
       - name: Run Playwright contract validation tests
         run: yarn test:contract:validation
 
