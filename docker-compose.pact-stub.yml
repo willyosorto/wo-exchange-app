@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   pact-stub-server:
     image: pactfoundation/pact-stub-server:latest
