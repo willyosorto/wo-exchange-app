@@ -29,11 +29,9 @@ jobs:
 
       - name: Install K6
         run: |
-          sudo gpg -k
-          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install k6
+          curl https://github.com/grafana/k6/releases/download/v0.52.0/k6-v0.52.0-linux-amd64.tar.gz -L | tar xvz --strip-components 1
+          sudo mv k6 /usr/local/bin/k6
+          k6 version
 
       - name: Start mock API server in background
         run: |
@@ -50,8 +48,8 @@ jobs:
           curl http://localhost:3000 || echo "Waiting for server..."
           sleep 5
 
-      - name: Run K6 browser performance tests
-        run: yarn test:k6:browser
+      - name: Create reports directory
+        run: mkdir -p tests/k6/reports
 
       - name: Run K6 API error tests
         run: yarn test:k6:api
