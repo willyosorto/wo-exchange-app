@@ -22,6 +22,9 @@ export default defineConfig({
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
 
+    /* Output folder for test artifacts */
+    outputDir: 'playwright/reports/test-results',
+
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: [
         ['html', { outputFolder: 'playwright/reports/html' }],

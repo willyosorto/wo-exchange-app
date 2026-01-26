@@ -1,0 +1,86 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  playwright-tests:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build application
+        run: yarn build
+
+      - name: Run Playwright tests
+        run: yarn test:e2e:playwright:run
+        env:
+          VITE_EXCHANGE_API_KEY: ${{ secrets.VITE_EXCHANGE_API_KEY }}
+          VITE_EXCHANGE_API_URL: ${{ secrets.VITE_EXCHANGE_API_URL }}
+
+      - name: Upload Playwright screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: tests/playwright/reports/test-results
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Playwright videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-videos
+          path: tests/playwright/reports/test-results
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: tests/playwright/reports/html
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload Playwright JUnit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-junit-report
+          path: tests/playwright/reports/junit
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Publish Test Results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: tests/playwright/reports/junit/*.xml
+          check_name: Playwright Test Results
+          comment_mode: off
