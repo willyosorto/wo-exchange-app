@@ -37,8 +37,15 @@ const createGenericMockResponse = (from: string, to: string, amount: number) => 
 
 test.describe('Currency Converter - Contract Validation', () => {
   test.beforeAll(async () => {
-    console.log(`Using Pact stub server at ${STUB_SERVER_URL}`);
+    console.log(`Tests will use API URL from environment: ${process.env.VITE_EXCHANGE_API_URL || 'default'}`);
     console.log('Make sure Docker container is running: docker-compose -f docker-compose.pact-stub.yml up -d');
+  });
+
+  test.beforeEach(async ({ page }) => {
+    // Clear cache before each test
+    await page.goto('http://localhost:3000/');
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
   });
 
 

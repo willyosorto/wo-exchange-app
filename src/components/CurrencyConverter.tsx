@@ -31,8 +31,8 @@ export const CurrencyConverter = ({ initialAmount }: CurrencyConverterProps) => 
   const [convertedAmount, setConvertedAmount] = useState(
     lastConversion?.convertedAmount || '0'
   );
-  const [conversionRate, setConversionRate] = useState(
-    lastConversion?.conversionRate || 1
+  const [conversionRate, setConversionRate] = useState<number>(
+    lastConversion?.conversionRate ?? 1
   );
   const [openFromCurrency, setOpenFromCurrency] = useState(false);
   const [openToCurrency, setOpenToCurrency] = useState(false);
