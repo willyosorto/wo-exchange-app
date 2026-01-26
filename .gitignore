@@ -4,9 +4,6 @@ node_modules
 #Envs
 .env
 
-#Cypress (root folder - should not be here)
-cypress/
-
 #Build
 build
 dist
