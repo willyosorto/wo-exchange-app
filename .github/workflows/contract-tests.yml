@@ -100,6 +100,9 @@ jobs:
 
       - name: Run Playwright contract validation tests
         run: yarn test:contract:validation
+        env:
+          VITE_EXCHANGE_API_URL: https://v6.exchangerate-api.com/v6
+          VITE_EXCHANGE_API_KEY: ${{ secrets.VITE_EXCHANGE_API_KEY }}
 
       - name: Stop Pact stub server
         if: always()
