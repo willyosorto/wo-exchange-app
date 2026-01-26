@@ -86,9 +86,10 @@ function testNotFoundError() {
 export function handleSummary(data) {
   return {
     stdout: textSummary(data, { indent: ' ', enableColors: true }),
+    'tests/k6/reports/api-error-summary.json': JSON.stringify(data, null, 2),
   };
   
-  // To generate HTML report, uncomment the import at the top and add:
+  // To generate HTML report locally, uncomment the import at the top and add:
   // 'tests/k6/reports/api-error-report.html': htmlReport(data),
 }
 

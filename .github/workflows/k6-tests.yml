@@ -64,11 +64,11 @@ jobs:
             kill $(cat vite-server.pid) || true
           fi
 
-      - name: Upload K6 HTML reports
+      - name: Upload K6 reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: k6-reports
-          path: tests/k6/reports/*.html
+          path: tests/k6/reports/*.json
           if-no-files-found: ignore
           retention-days: 30
