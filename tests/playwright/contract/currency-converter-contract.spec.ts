@@ -37,8 +37,11 @@ const createGenericMockResponse = (from: string, to: string, amount: number) => 
 
 test.describe('Currency Converter - Contract Validation', () => {
   test.beforeAll(async () => {
-    console.log(`Tests will use API URL from environment: ${process.env.VITE_EXCHANGE_API_URL || 'default'}`);
-    console.log('Make sure Docker container is running: docker-compose -f docker-compose.pact-stub.yml up -d');
+    console.log('=== Contract Test Setup ===');
+    console.log('• App uses real API, but Playwright intercepts all network requests');
+    console.log('• Contract paths (e.g., USD/HNL/10) → proxied to Pact stub server at http://localhost:8992');
+    console.log('• Non-contract paths (e.g., USD/HNL/1) → mocked inline to prevent real API calls');
+    console.log('• Docker required: docker compose -f docker-compose.pact-stub.yml up -d');
   });
 
   test.beforeEach(async ({ page }) => {
