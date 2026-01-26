@@ -90,7 +90,12 @@ jobs:
       - name: Wait for stub server to be ready
         run: |
           echo "Waiting for Pact stub server..."
-          timeout 30 bash -c 'until curl -f http://localhost:8992 2>/dev/null; do sleep 1; done' || exit 1
+          sleep 5
+          echo "Checking Docker logs..."
+          docker compose -f docker-compose.pact-stub.yml logs
+          echo "Checking if container is running..."
+          docker compose -f docker-compose.pact-stub.yml ps
+          timeout 30 bash -c 'until curl -s http://localhost:8992 2>&1 | grep -q "404\|200"; do echo "Retrying..."; sleep 2; done' || (echo "Health check failed. Container logs:"; docker compose -f docker-compose.pact-stub.yml logs; exit 1)
           echo "Stub server is ready!"
 
       - name: Build application
