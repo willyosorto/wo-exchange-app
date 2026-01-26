@@ -1,16 +1,9 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const USE_HTML_REPORT = __ENV.K6_HTML_REPORT !== 'false';
-let htmlReport;
-
-if (USE_HTML_REPORT) {
-  try {
-    htmlReport = (await import('https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js')).htmlReport;
-  } catch (e) {
-    console.log('HTML reporter not available, skipping...');
-  }
-}
+// HTML reporter only works locally, not in CI
+// Uncomment the line below to generate HTML reports when running locally:
+// import { htmlReport } from 'https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js';
 
 export const options = {
   scenarios: {
@@ -91,16 +84,12 @@ function testNotFoundError() {
 }
 
 export function handleSummary(data) {
-  const summary = {
+  return {
     stdout: textSummary(data, { indent: ' ', enableColors: true }),
   };
   
-  // Only generate HTML report if reporter is available
-  if (htmlReport) {
-    summary['tests/k6/reports/api-error-report.html'] = htmlReport(data);
-  }
-  
-  return summary;
+  // To generate HTML report, uncomment the import at the top and add:
+  // 'tests/k6/reports/api-error-report.html': htmlReport(data),
 }
 
 function textSummary(data, options = {}) {
