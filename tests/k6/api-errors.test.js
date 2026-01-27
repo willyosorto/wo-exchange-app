@@ -1,6 +1,9 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { htmlReport } from 'https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js';
+
+// HTML reporter only works locally, not in CI
+// Uncomment the line below to generate HTML reports when running locally:
+// import { htmlReport } from 'https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js';
 
 export const options = {
   scenarios: {
@@ -82,9 +85,12 @@ function testNotFoundError() {
 
 export function handleSummary(data) {
   return {
-    'tests/k6/reports/api-error-report.html': htmlReport(data),
     stdout: textSummary(data, { indent: ' ', enableColors: true }),
+    'tests/k6/reports/api-error-summary.json': JSON.stringify(data, null, 2),
   };
+  
+  // To generate HTML report locally, uncomment the import at the top and add:
+  // 'tests/k6/reports/api-error-report.html': htmlReport(data),
 }
 
 function textSummary(data, options = {}) {
