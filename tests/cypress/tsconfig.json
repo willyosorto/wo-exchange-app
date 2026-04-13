@@ -6,6 +6,10 @@
     "types": ["cypress"],
     "strict": true
   },
-  "include": ["./e2e/**/*.cy.ts"],
+  "include": [
+    "./e2e/**/*.cy.ts",
+    "./support/**/*.ts",
+    "./pages/**/*.ts"
+  ],
   "exclude": []
 }
