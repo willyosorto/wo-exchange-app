@@ -82,7 +82,6 @@ API Layer:        39.39%
 - ✅ **API Testing**: REST API validation with multiple tools
 - ✅ **Contract Testing**: Consumer-driven contracts with Pact
 - ✅ **Performance Testing**: Load testing with K6 and browser metrics
-- ✅ **Visual Testing**: Screenshot comparison on failure
 - ✅ **Mobile Testing**: Responsive testing on mobile viewports
 
 ### CI/CD & DevOps
@@ -95,9 +94,8 @@ API Layer:        39.39%
 
 ### Test Design & Strategy
 - ✅ **Test Pyramid**: Proper balance of unit, integration, and E2E tests
-- ✅ **Page Object Model**: Reusable test components
-- ✅ **Data-Driven Testing**: Test data management
-- ✅ **Accessibility Testing**: Role-based selectors and ARIA support
+- ✅ **Page Object Model**: Reusable, maintainable page classes for Cypress and Playwright
+- ✅ **Viewport-Aware POM**: Page objects resolve mobile/desktop nav selectors automatically
 - ✅ **Error Handling**: Comprehensive edge case coverage
 - ✅ **Mock Strategies**: API mocking to avoid external dependencies
 
@@ -107,7 +105,6 @@ API Layer:        39.39%
 - ✅ **Reporting**: Mochawesome, HTML reports, JUnit XML
 - ✅ **Version Control**: Git with conventional commits
 - ✅ **Package Management**: Yarn workspaces
-- ✅ **Code Quality**: TypeScript, ESLint, Prettier
 
 ### Manual Testing Skills
 - ✅ **Exploratory Testing**: Comprehensive manual testing coverage
@@ -310,6 +307,7 @@ Each test directory includes detailed README with:
 8. **Contract Testing**: Advanced API contract validation
 9. **Clean Code**: TypeScript, ESLint, well-documented
 10. **DevOps Skills**: Docker, CI/CD, artifact management
+11. **Page Object Model**: Both Cypress and Playwright test suites use POM for clean, maintainable specs — with viewport-aware page classes that handle mobile/desktop navigation automatically
 
 ### Testing Metrics
 

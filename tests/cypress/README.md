@@ -138,11 +138,105 @@ cy.window().then((win) => {
 });
 ```
 
+## Page Object Model (POM)
+
+All E2E tests follow the **Page Object Model** pattern to keep test logic clean, reusable, and maintainable. Page classes live in `tests/cypress/pages/`.
+
+### Structure
+
+```
+tests/cypress/pages/
+├── CalculatorPage.ts         # Calculator UI interactions
+└── CurrencyConverterPage.ts  # Currency Converter UI interactions
+```
+
+Each page class encapsulates:
+- **Locators** as `get` properties using `data-cy` attributes
+- **Action methods** for user interactions (click, type, visit)
+
+### CalculatorPage
+
+```typescript
+import { CalculatorPage } from '../pages/CalculatorPage';
+
+const calculator = new CalculatorPage();
+
+// Navigation
+calculator.goto();               // Visits '/' and clicks the mobile calculator nav button
+
+// Locators
+calculator.title                 // [data-cy="calculator-title"]
+calculator.display               // [data-cy="calculator-display"]
+calculator.operation             // [data-cy="calculator-operation"]
+
+// Actions
+calculator.clickDigit(5);        // Clicks digit button by number
+calculator.clickAdd();           // Clicks '+' operator
+calculator.clickSubtract();      // Clicks '-' operator
+calculator.clickMultiply();      // Clicks '×' operator
+calculator.clickDivide();        // Clicks '÷' operator
+calculator.clickEquals();        // Clicks '='
+calculator.clickPercent();       // Clicks '%'
+calculator.clickClear();         // Clicks 'C'
+calculator.clickDelete();        // Clicks backspace
+calculator.clickCopy();          // Copies display value to clipboard
+calculator.navigateToConverter(); // Clicks the mobile converter nav button
+```
+
+### CurrencyConverterPage
+
+```typescript
+import { CurrencyConverterPage } from '../pages/CurrencyConverterPage';
+
+const converter = new CurrencyConverterPage();
+
+// Navigation
+converter.goto();                // Visits '/' and clears localStorage via onBeforeLoad
+
+// Locators
+converter.title                  // [data-cy="exchange-title"]
+converter.fromAmountInput        // [data-cy="exchange-from-amount-input"]
+converter.toAmountInput          // [data-cy="exchange-to-amount-input"]
+converter.fromCurrencyButton     // [data-cy="exchange-from-button"]
+converter.toCurrencyButton       // [data-cy="exchange-to-button"]
+converter.swapButton             // [data-cy="swap-exchange-button"]
+converter.exchangeResult         // [data-cy="exchange-result"]
+
+// Actions
+converter.openFromCurrencyPicker();        // Clicks the 'from' currency button
+converter.searchFromCurrency('USD');       // Types in 'from' currency search input
+converter.selectFromCurrency('usd');       // Clicks a 'from' currency option
+converter.openToCurrencyPicker();          // Clicks the 'to' currency button
+converter.searchToCurrency('HNL');         // Types in 'to' currency search input
+converter.selectToCurrency('hnl');         // Clicks a 'to' currency option
+converter.fillFromAmount('100');           // Types in the amount input
+converter.clickSwap();                     // Clicks the swap button
+```
+
+### Usage in Tests
+
+```typescript
+import { CalculatorPage } from '../pages/CalculatorPage';
+
+const calculator = new CalculatorPage();
+
+it('performs basic arithmetic', () => {
+  calculator.goto();
+  calculator.clickDigit(1);
+  calculator.clickDigit(0);
+  calculator.clickAdd();
+  calculator.clickDigit(5);
+  calculator.clickEquals();
+  calculator.display.should('contain.text', '15');
+});
+```
+
 ## Best Practices
 
-1. **Use data-cy attributes**: All interactive elements use `data-cy` for stable selectors
-2. **Wait for API calls**: Use `cy.wait('@aliasName')` after intercepts
-3. **Clipboard handling**: CI environments use mocked clipboard API
-4. **Video optimization**: Videos auto-delete on passing tests
-5. **Mobile-first**: Default viewport is mobile (390x844)
-6. **Real API testing**: Tests use actual API with environment variables
+1. **Page Object Model**: All selectors and actions are encapsulated in page classes — never hard-code selectors in spec files
+2. **data-cy selectors**: Page objects use `[data-cy]` attributes for stable, test-only selectors that won't conflict with `data-testid`
+3. **Wait for API calls**: Use `cy.wait('@aliasName')` after intercepts
+4. **Clipboard handling**: CI environments use mocked clipboard API defined in `support/e2e.ts`
+5. **Video optimization**: Videos auto-delete on passing tests
+6. **Mobile-first**: Default viewport is mobile (390x844)
+7. **Real API testing**: Tests use actual API with environment variables
